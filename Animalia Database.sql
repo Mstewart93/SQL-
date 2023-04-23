@@ -42,7 +42,7 @@ SELECT * FROM	tbl_class;  /* the asterik means all*/
 
 CREATE TABLE tbl_order (
 	order_id INT PRIMARY KEY NOT NULL IDENTITY (1,1),
-	orde_type VARCHAR(50) NOT NULL
+	order_type VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE tbl_care (
@@ -69,7 +69,7 @@ CREATE TABLE tbl_specialist (
 );
 
 INSERT INTO tbl_order
-		(orde_type)
+		(order_type)
 		VALUES
 		('carnivore'),
 		('herbivore'),
@@ -133,11 +133,12 @@ INSERT INTO tbl_specialist
 	;
 	SELECT * FROM tbl_specialist;
 
+	/*fk means foreign key, points back to the other table and column, relates throught the anamilia id if deleted or added corrects to the species table*/
 	CREATE TABLE tbl_species(
 		species_id INT PRIMARY KEY NOT NULL IDENTITY (1,1),
 		species_name VARCHAR(50) NOT NULL,
 		species_animalia INT NOT NULL CONSTRAINT fk_animalia_id FOREIGN KEY REFERENCES tbl_animalia(animalia_id) ON UPDATE CASCADE ON DELETE CASCADE,
-		/*fk means foreign key, points back to the other table and column, relates throught the anamilia id if deleted or added corrects to the species table*/
+		
 		species_class INT NOT NULL CONSTRAINT fk_class_id FOREIGN KEY REFERENCES tbl_class(class_id) ON UPDATE CASCADE ON DELETE CASCADE,
 		species_order INT NOT NULL CONSTRAINT fk_order_id FOREIGN KEY REFERENCES tbl_order(order_id) ON UPDATE CASCADE ON DELETE CASCADE,
 		species_habitat INT NOT NULL CONSTRAINT fk_habitat_id FOREIGN KEY REFERENCES tbl_habitat(habitat_id)  ON UPDATE CASCADE ON DELETE CASCADE,
@@ -160,4 +161,36 @@ INSERT INTO tbl_specialist
 
 		;
 
-		SELECT * FROM tbl_species;
+		SELECT * FROM tbl_species; /*Query*/
+
+		SELECT * FROM tbl_species WHERE species_name = 'chicken';
+		/*Whole point of relations is to se a join statement with parameters*/
+		/*a1 is createing the alias*/
+	SELECT 
+			a1.species_name, a2.animalia_type,
+			a3.class_type, a4.order_type, a5.habitat_type,
+			a6.nutrition_type, a7.care_type
+			/*doesnt need the as syntax*/
+			FROM tbl_species a1
+			INNER JOIN tbl_animalia a2 ON a2.animalia_id = a1.species_animalia
+			INNER JOIN tbl_class a3 ON a3.class_id = a1.species_class
+			INNER JOIN tbl_order a4 ON a4.order_id = a1.species_order
+			INNER JOIN tbl_habitat a5 ON a5.habitat_id = a1.species_habitat
+			INNER JOIN tbl_nutrition a6 ON a6.nutrition_id = a1.species_nutrition
+			INNER JOIN tbl_care a7 ON a7.care_id = a1.species_care
+		WHERE species_name = 'brown bear'
+;
+
+SELECT 
+	a1.species_name, a2.habitat_type, a2.habitat_cost, 
+	a3.nutrition_type, a3.nutrition_cost
+	FROM tbl_species a1
+	INNER JOIN tbl_habitat a2 ON a2.habitat_id = a1.species_habitat
+	INNER JOIN tbl_nutrition a3 ON a3.nutrition_id = a1.species_nutrition
+	WHERE species_name = 'ghost bat'
+;
+
+DROP TABLE tbl_species, tbl_animalia, tbl_care, tbl_class, tbl_habitat, tbl_nutrition, tbl_order, tbl_specialist;
+	
+IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES tbl_species)
+	DROP TABLE tbl_species, tbl_animalia, tbl_care, tbl_class, tbl_habitat, tbl_nutrition, tbl_order,tbl_specialist;
