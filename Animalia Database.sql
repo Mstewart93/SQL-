@@ -6,10 +6,7 @@ GO*/
  /*To store as procedure cant be same as one existing*/
  /*asign correct database then run, remove database, then run
  then check program ability stored procedures and their it is*/
-
- CREATE PROCEDURE createzooDB
- AS
- BEGIN
+USE db_zoo
  /*ensrue everything is indented in the begin*/
 	CREATE TABLE tbl_animalia (
 		animalia_id INT PRIMARY KEY NOT NULL IDENTITY (1,1), /*first starting value second increments*/
@@ -201,4 +198,25 @@ GO*/
 	
 	IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES tbl_species)
 		DROP TABLE tbl_species, tbl_animalia, tbl_care, tbl_class, tbl_habitat, tbl_nutrition, tbl_order,tbl_specialist;
-END /*END of block*/
+SELECT * FROM tbl_habitat
+use db_zoo
+SELECT species_name FROM tbl_species
+WHERE species_order=3
+
+SELECT nutrition_type FROM tbl_nutrition
+WHERE nutrition_cost <= 600000
+
+select * from tbl_nutrition
+select * from tbl_species
+/*SELECT Orders.OrderID, Customers.CustomerName
+FROM Orders
+INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID;
+
+SELECT table1.columnrequest, table2.columnrequest
+FROM table1
+INNER JOIN Table2 ON table1.in common = table2.in common; */
+SELECT tbl_nutrition.nutrition_id, tbl_species.species_name
+FROM (tbl_nutrition
+	INNER Join tbl_species On tbl_nutrition.nutrition_id = tbl_species.species_id)
+	Where nutrition_id > 2202 AND nutrition_id < 2206
+;
